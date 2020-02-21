@@ -127,3 +127,22 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Gradle
+.gradle/
+**/pkg
+
+# Test output
+**/coverage-report
+**/test-reports
+pipeline-info/
+
+# intellijei
+.idea
+**/*.iml
+
+# forge
+forge.yaml
+**/.forge/
+**/k8s/

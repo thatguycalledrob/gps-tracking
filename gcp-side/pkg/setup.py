@@ -2,7 +2,6 @@ import setuptools
 
 setuptools.setup(
     name="gps-utils",
-    version="0.0.1",
     author="Robert Howie",
     author_email="robertzhowie@gmail.com",
     description="utils for the app to use",
