@@ -18,5 +18,5 @@ $ErrorActionPreference = "Stop"
 echo generating version: $version
 
 docker build -f Dockerfile -t gcr.io/gps-van-tracker/gps-listener:${version} .
-gcloud docker -- push gcr.io/gps-van-tracker/gps-listener:${version}
+docker push gcr.io/gps-van-tracker/gps-listener:${version}
 # gcloud beta run deploy van-tracker --image gcr.io/gps-van-tracker/gps-listener:latest --region europe-west1 --allow-unauthenticated --platform managed

@@ -1,3 +1,7 @@
+# gcp keys, if accidently left in repo
+key.json
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -127,11 +131,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-
-# Gradle
-.gradle/
-**/pkg
 
 # Test output
 **/coverage-report
