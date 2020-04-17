@@ -4,6 +4,7 @@ import pynmea2
 import time
 import datetime
 import requests
+import os
 
 
 def read_gps(line):
@@ -33,10 +34,10 @@ def read_gps(line):
 
 
 if __name__ == '__main__':
-    port_read_rate = 0.01  # how often to read from the serial port
-    observation_interval = 10  # how often (in s) to take a reading
-    report_interval = 60  # how often (in s) to make an API call
-    url = ""
+    port_read_rate = 0.01                   # how often to read from the serial port
+    observation_interval = 10               # how often (in s) to take a reading
+    report_interval = 60                    # how often (in s) to make an API call
+    url = os.environ.get("GPS_URL", "")     # get the cloud environment URL
 
     # Port specific to hardware configuration and pi variant.
     # baudrate chosen from gps chip manual.
