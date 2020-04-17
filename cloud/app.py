@@ -1,9 +1,8 @@
-# taken from:
-# https://cloud.google.com/community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run
 import os
+import hashlib
+import uuid
 from flask import Flask, request, jsonify
 from firebase_admin import credentials, firestore, initialize_app
-import hashlib
 from gps_utils import logger
 
 # Initialize Flask app
@@ -16,8 +15,9 @@ default_app = initialize_app(cred)
 db = firestore.client()
 todo_ref = db.collection('todos')
 
-# secret setup
-secret = hashlib.sha1("lucy".encode()).hexdigest()
+# secret setup - read from file
+with open(os.path.abspath(os.path.join(__file__, '..', 'secret.txt'))) as f:
+    secret = hashlib.sha1(f.read().strip().encode()).hexdigest()
 
 # Setup consts
 AUTH_HEADER = 'Authorization'
@@ -34,7 +34,7 @@ def before_request():
 @app.route('/add', methods=['POST'])
 def create():
     try:
-        id = request.json['id']
+        id = str(uuid.uuid1().hex)  # basic uuid
         todo_ref.document(id).set(request.json.get('data', {}))
         return jsonify({"success": True}), 201
 
@@ -54,7 +54,7 @@ def read():
             return jsonify(all_todos), 200
 
     except Exception as e:
-        return f"An Error Occured: {e}"
+        return f"An Error Occurred: {e}"
 
 
 if __name__ == '__main__':

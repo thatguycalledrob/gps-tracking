@@ -34,10 +34,11 @@ def read_gps(line):
 
 
 if __name__ == '__main__':
-    port_read_rate = 0.01                   # how often to read from the serial port
-    observation_interval = 10               # how often (in s) to take a reading
-    report_interval = 60                    # how often (in s) to make an API call
-    url = os.environ.get("GPS_URL", "")     # get the cloud environment URL
+    port_read_rate = 0.01                           # how often to read from the serial port
+    observation_interval = 10                       # how often (in s) to take a reading
+    report_interval = 60                            # how often (in s) to make an API call
+    url = os.environ.get("GPS_URL", "")             # get the cloud environment URL
+    secret = os.environ.get("cloud_secret", "")     # password to connect to the backend
 
     # Port specific to hardware configuration and pi variant.
     # baudrate chosen from gps chip manual.
@@ -81,7 +82,7 @@ if __name__ == '__main__':
                 port.open()
 
             print(json.dumps({"data": msgBody}))
-            requests.post(url, data=json.dumps({"data": msgBody}, default=str))
+            requests.post(url + "/add", data=json.dumps({"data": msgBody}, default=str))
 
         except Exception as e:
 

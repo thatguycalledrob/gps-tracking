@@ -1,6 +1,16 @@
 # The server
 
-This part of the project is taken from the cloudrun guide:
-https://cloud.google.com/community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run
+This guide is specifically around the server.
 
-It is designed to run for free on the GCP free teir using firebase.
+## prerequisites
+
+Create files:
+1. key.json     ->      this is your GCP project service account key
+2. secret.json  ->      this is a "password" - nothing fancy
+
+
+Install
+1. Docker for Windows (Or for your OS)
+2. gcloud CLI
+
+

@@ -20,6 +20,7 @@
 
 sleep 15; # sleep allows system to fully boot
 
+
 cd /home/pi/Desktop/gps-tracking
 
 # debug output to check that all is well
@@ -28,7 +29,7 @@ echo "[DEBUG] beginning execution at time : $(timestamp)" >> latest.txt
 chmod 755 latest.txt
 
 # commenting out this line in the short term
-# git remote update
+# git pull
 
 export GPS_URL="https://gps-listener-lcn55j3ska-ew.a.run.app"
 

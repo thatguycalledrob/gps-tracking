@@ -1,6 +1,6 @@
 # gcp keys, if accidently left in repo
 key.json
-
+secret.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
