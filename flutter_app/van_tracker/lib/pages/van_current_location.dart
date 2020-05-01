@@ -26,8 +26,6 @@ class VanCurrentLocationState extends State<VanCurrentLocation>
   // This project didn't require that change, so YMMV.
 
   static LatLng london = LatLng(51.5, -0.09);
-  static LatLng paris = LatLng(48.8566, 2.3522);
-  static LatLng dublin = LatLng(53.3498, -6.2603);
 
   MapController mapController;
 
@@ -77,77 +75,41 @@ class VanCurrentLocationState extends State<VanCurrentLocation>
       Marker(
         width: 80.0,
         height: 80.0,
-        point: dublin,
+        point: london,
         builder: (ctx) => Container(
-          child: FlutterLogo(
-            key: Key('green'),
-            colors: Colors.green,
-          ),
+          child: Image.asset('assets/images/transit.png')
         ),
       )
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text('Animated MapController')),
+      appBar: AppBar(title: Text('Van Current location')),
       drawer: buildDrawer(context, VanCurrentLocation.route),
-      body: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Column(
+      body: Column(
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Row(
-                children: <Widget>[
-                  MaterialButton(
-                    child: Text('London'),
-                    onPressed: () {
-                      _animatedMapMove(london, 10.0);
-                    },
-                  ),
-                  MaterialButton(
-                    child: Text('Paris'),
-                    onPressed: () {
-                      _animatedMapMove(paris, 5.0);
-                    },
-                  ),
-                  MaterialButton(
-                    child: Text('Dublin'),
-                    onPressed: () {
-                      _animatedMapMove(dublin, 5.0);
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: Row(
-                children: <Widget>[
-                  MaterialButton(
-                    child: Text('Fit Bounds'),
-                    onPressed: () {
-                      var bounds = LatLngBounds();
-                      bounds.extend(dublin);
-                      bounds.extend(paris);
-                      bounds.extend(london);
-                      mapController.fitBounds(
-                        bounds,
-                        options: FitBoundsOptions(
-                          padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+              padding: EdgeInsets.only(top: 1.0, bottom: 1.0),
+              child:                   MaterialButton(
+                child: Text('Jump to Bounds'),
+                onPressed: () {
+                  var bounds = LatLngBounds();
+                  bounds.extend(london);
+                  mapController.fitBounds(
+                    bounds,
+                    options: FitBoundsOptions(
+                      padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                    ),
+                  );
+                },
               ),
             ),
             Flexible(
               child: FlutterMap(
                 mapController: mapController,
                 options: MapOptions(
-                    center: LatLng(51.5, -0.09),
-                    zoom: 5.0,
-                    maxZoom: 10.0,
+                    center: LatLng(51.5, -0.09), //todo: grab via API
+                    zoom: 13.0,
+                    maxZoom: 19.0,
                     minZoom: 3.0),
                 layers: [
                   TileLayerOptions(
@@ -160,7 +122,6 @@ class VanCurrentLocationState extends State<VanCurrentLocation>
             ),
           ],
         ),
-      ),
     );
   }
 }
