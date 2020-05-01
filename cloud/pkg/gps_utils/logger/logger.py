@@ -1,8 +1,14 @@
 """ Provides better logging """
 import json
 from typing import Any, Dict, Optional, List
-from time import ctime
+from google.cloud import logging as gcp_logger  # pip installed via "google-cloud-logging"
+import logging as py_logger
 
+# Instantiates a gcp logging client client, with a debug log level
+# this posts logs to the gcp stackdriver logs.
+client = gcp_logger.Client()
+client.setup_logging(log_level=py_logger.DEBUG)
+_internal_logger = client.logger('incode-logger')
 
 class logger:
     @staticmethod
@@ -34,12 +40,10 @@ class logger:
 
         if args:
             message: str = message + ' ' + ' '.join(map(str, args))
-
         # construct the desired logging format here
         json_print: Dict[str, str] = {
             'severity': level,
             'message': message,
-            'timestamp': ctime(),
         }
 
         if kwargs != {}:
@@ -47,7 +51,7 @@ class logger:
 
         # default=str spits out everything that is not json searlisable as a string.
         # Nasty, but required to deal with things like datetime.datetime objects
-        logs = json.dumps(json_print, default=str)
+        logs: Dict[str, str] = json.loads(json.dumps(json_print, default=str))
 
         # This prints to stdout - read by stackdriver
-        print(logs)
+        _internal_logger.log_struct(logs)

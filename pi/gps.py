@@ -39,6 +39,7 @@ if __name__ == '__main__':
     report_interval = 60                            # how often (in s) to make an API call
     url = os.environ.get("GPS_URL", "")             # get the cloud environment URL
     secret = os.environ.get("cloud_secret", "")     # password to connect to the backend
+    auth_headers = {"Authorization": secret}        # headers construct
 
     # Port specific to hardware configuration and pi variant.
     # baudrate chosen from gps chip manual.
@@ -81,8 +82,8 @@ if __name__ == '__main__':
                 time.sleep(5)
                 port.open()
 
-            print(json.dumps({"data": msgBody}))
-            requests.post(url + "/add", data=json.dumps({"data": msgBody}, default=str))
+            r = requests.post(url + "/position", json={"data": msgBody}, headers=auth_headers)
+            r.close()
 
         except Exception as e:
 

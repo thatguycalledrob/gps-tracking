@@ -6,7 +6,7 @@ This guide is specifically around the server.
 
 Create files:
 1. key.json     ->      this is your GCP project service account key
-2. secret.json  ->      this is a "password" - nothing fancy
+2. ../shared/secret.json  ->      this is a "password" - nothing fancy just classic private-private key
 
 
 Install
