@@ -1,0 +1,138 @@
+---
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: "Van Tracker Appside"
+basePath: "/app/v1"
+schemes:
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /history-query:
+    post:
+      description: "Post a query for a history"
+      operationId: "queryHistory"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "query"
+        required: true
+        schema:
+          $ref: "#/definitions/query"
+        x-exportParamName: "Query"
+      responses:
+        "201":
+          description: "data from history query"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/coordinate"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+  /parking-spots:
+    get:
+      description: "previous parking spots"
+      operationId: "retriveParkingSpots"
+      parameters: []
+      responses:
+        "201":
+          description: "json blob with parking spots (including times visited)"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/coordinate"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+  /current-location:
+    get:
+      description: "latest location"
+      operationId: "currentLocation"
+      parameters: []
+      responses:
+        "200":
+          description: "gets a single coordinate with the current van location"
+          schema:
+            $ref: "#/definitions/coordinate"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+definitions:
+  query:
+    type: "object"
+    required:
+    - "algorithm"
+    - "fromDate"
+    - "toDate"
+    properties:
+      fromDate:
+        type: "integer"
+        format: "int64"
+      toDate:
+        type: "integer"
+        format: "int64"
+      algorithm:
+        type: "string"
+        enum:
+        - "hourlyData"
+        - "onlyMovement"
+  coordinate:
+    type: "object"
+    required:
+    - "alt"
+    - "lat"
+    - "long"
+    - "order"
+    properties:
+      time:
+        type: "integer"
+        format: "int64"
+      sats:
+        type: "number"
+      lat:
+        type: "number"
+      long:
+        type: "number"
+      alt:
+        type: "number"
+      order:
+        type: "integer"
+      count:
+        type: "integer"
+    example:
+      sats: 6.02745618307040320615897144307382404804229736328125
+      alt: 5.63737665663332876420099637471139430999755859375
+      count: 7
+      time: 0
+      lat: 1.46581298050294517310021547018550336360931396484375
+      long: 5.962133916683182377482808078639209270477294921875
+      order: 2
+  instructions:
+    type: "object"
+    required:
+    - "instruction"
+    properties:
+      instruction:
+        type: "string"
+        enum:
+        - "restart"
+        - "startVnc"
+  Error:
+    type: "object"
+    required:
+    - "code"
+    - "message"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
