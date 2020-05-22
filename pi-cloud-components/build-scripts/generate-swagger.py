@@ -23,6 +23,11 @@ def run_wrapper(_client: docker.DockerClient, image: str, command: List[str], **
     """
     Please see ContainerCollection(Collection).run(...) for the meaninig
     of these arguments
+
+    Args:
+        :param _client: (DockerClient) An instance of the docker API client
+        :param image: (str) Name of the docker image to run via the docker API
+        :param command: (List[str]) command to execute on the docker image
     """
     try:
         log_out(_client.containers.run(image, command, **kwargs))
@@ -44,6 +49,7 @@ def log_out(msg: bytes, stream: TextIO = sys.stdout) -> None:
         print(line, file=stream)
 
 
+# run with a simple python3 .\generate-swagger.py
 if __name__ == '__main__':
     client = docker.from_env()
 
@@ -61,7 +67,7 @@ if __name__ == '__main__':
 
     # create the swagger server stub
     run_wrapper(client, 'swaggerapi/swagger-codegen-cli',
-                ['generate', '-i', '/data/pi-cloud-swagger.yaml', '-l', 'python', '-o', '/data/pi-installation'],
+                ['generate', '-i', '/data/pi-cloud-swagger.yaml', '-l', 'python', '-o', '/data/pi-installation/swaggerlib'],
                 mounts=[build_directory], remove=True,
                 detach=False, stdout=True, stderr=True)
 
@@ -69,24 +75,24 @@ if __name__ == '__main__':
     time.sleep(2)
 
     # write our handlers somewhere that they won't get overwritten!
-    con_dir = path.abspath(path.join('..', 'cloud-server', 'swagger_server', 'controllers'))
-    controllers = [f for f in os.listdir(con_dir) if (path.isfile(path.join(con_dir, f)) and not '__' in f)]
-    for c in controllers:
-        with(open(path.join(con_dir, c), 'w')) as file:
-            new_file: List[str] = file.readlines()
-            print(path.join(con_dir, c))
-            print(swagger_warning)
-            print(new_file)
-
-            # prepend warning to start of file
-            new_file = swagger_warning + new_file
-
-            for line in new_file:
-                if 'def ' in line and '):' in line:
-                    cmd = re.findall(r'def\s(\w+)\(\w+\):', line)[0]
-                    print(cmd)
-
-            # overwrite old content of file
-            file.seek(0)
-            file.writelines('\n'.join(new_file))
-            file.truncate()
+    # con_dir = path.abspath(path.join('..', 'cloud-server', 'swagger_server', 'controllers'))
+    # controllers = [f for f in os.listdir(con_dir) if (path.isfile(path.join(con_dir, f)) and not '__' in f)]
+    # for c in controllers:
+    #     with(open(path.join(con_dir, c), 'w')) as file:
+    #         new_file: List[str] = file.readlines()
+    #         print(path.join(con_dir, c))
+    #         print(swagger_warning)
+    #         print(new_file)
+    #
+    #         # prepend warning to start of file
+    #         new_file = swagger_warning + new_file
+    #
+    #         for line in new_file:
+    #             if 'def ' in line and '):' in line:
+    #                 cmd = re.findall(r'def\s(\w+)\(\w+\):', line)[0]
+    #                 print(cmd)
+    #
+    #         # overwrite old content of file
+    #         file.seek(0)
+    #         file.writelines('\n'.join(new_file))
+    #         file.truncate()

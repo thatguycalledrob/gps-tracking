@@ -4,14 +4,11 @@ tox.ini
 .travis.yml
 git_push.sh
 test-requirements.txt
-swagger_server/test/
-swagger_server/test
+test/
+test
 
 # our "logic" folder  - here is where the API is served from!
 swagger_server/logic/
 
 # info that we have added to the readme.md
 README.md
-
-# contents of the requirements for the docker container
-requirements.txt

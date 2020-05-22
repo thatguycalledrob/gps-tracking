@@ -17,15 +17,16 @@ $project = "gps-van-tracker"
 $ErrorActionPreference = "Stop"
 
 # run with:
-# .\buildme.ps1 v0.0.1
+# ./build_container_and_push.ps1 v1.0.0
 
 echo generating version: $version
 
-# a little naive, we should really fully resolve the cloud path here
+# a little naive, we should really fully resolve the path here via python or similar
 cd ..
-cd cloud
+cd cloud-server
 
-# This builds the app into a docker container.
+# This builds the app into a tagged docker container.
+# The tag is important, it specifics which google project contaienr storage to push to.
 docker build -f Dockerfile -t gcr.io/${project}/gps-listener:${version} .
 
 # The container is now pushed to the cloud container repository
@@ -37,4 +38,4 @@ gcloud beta run deploy van-tracker --image gcr.io/gps-van-tracker/gps-listener:$
 
 # back to the build directory
 cd ..
-cd build
+cd build-scripts

@@ -57,7 +57,7 @@ class Coordinate(Model):
         self._order = order
 
     @classmethod
-    def from_dict(cls, dikt) -> 'Added':
+    def from_dict(cls, dikt) -> 'Coordinate':
         """Returns the dict as a model
 
         :param dikt: A dict.

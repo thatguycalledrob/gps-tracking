@@ -1,17 +1,38 @@
 ---
 swagger: "2.0"
+
 info:
   version: "0.0.1"
   title: "Van Tracker Piside"
+
 basePath: "/pi/v1"
+
 schemes:
 - "https"
+
 consumes:
 - "application/json"
+
 produces:
 - "application/json"
+
+
+securityDefinitions:
+   APIKeyHeader:
+     type: apiKey
+     in: header
+     name: X-API-Key
+
+# Global security (applies to all operations):
+security:
+  - APIKeyHeader: []
+
+
+# actual API path definitions
 paths:
+
   /coordinates:
+
     post:
       description: "Adds the latest coordinate data to quick storage"
       operationId: "add_coordinates"
@@ -26,6 +47,7 @@ paths:
           items:
             $ref: "#/definitions/coordinate"
       responses:
+
         "201":
           description: "created"
           schema:
@@ -34,13 +56,21 @@ paths:
           description: "unexpected error"
           schema:
             $ref: "#/definitions/Error"
+
+        "401":
+           $ref: '#/definitions/UnauthorizedResponse'
+
       x-swagger-router-controller: "swagger_server.controllers.default_controller"
+
+
   /instructions:
+
     get:
       description: "gets instructions for the Pi to execute"
       operationId: "retrive_instructions"
       parameters: []
       responses:
+
         "200":
           description: "responded"
           schema:
@@ -49,8 +79,19 @@ paths:
           description: "unexpected error"
           schema:
             $ref: "#/definitions/Error"
+
+        "401":
+           $ref: '#/definitions/UnauthorizedResponse'
+
       x-swagger-router-controller: "swagger_server.controllers.default_controller"
+
+
+# definitions are reusable chunks.
+# If we add more api calls, we may want to use the "coordinate"
+# object again, so we can referance it via "#/definitions/coordinate"
+# additonally it makes the paths above easier to read.
 definitions:
+
   added:
     type: "object"
     required:
@@ -60,6 +101,7 @@ definitions:
         type: "string"
     example:
       status: "status"
+
   coordinate:
     type: "object"
     required:
@@ -82,6 +124,7 @@ definitions:
         type: "number"
       order:
         type: "number"
+
   instructions:
     type: "object"
     required:
@@ -92,8 +135,18 @@ definitions:
         enum:
         - "restart"
         - "startVnc"
+        - "do-nothing"
     example:
       instruction: "restart"
+
+  UnauthorizedResponse:
+    type: "object"
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+
   Error:
     type: "object"
     required:

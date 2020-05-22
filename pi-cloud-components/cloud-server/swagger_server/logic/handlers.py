@@ -1,3 +1,7 @@
+from typing import List, Dict
+
+import connexion
+
 from swagger_server.models.added import Added  # noqa: E501
 from swagger_server.models.coordinate import Coordinate  # noqa: E501
 from swagger_server.models.error import Error  # noqa: E501
@@ -5,27 +9,18 @@ from swagger_server.models.instructions import Instructions  # noqa: E501
 from swagger_server import util
 
 
-def handle_add_coordinates(coordinates):  # noqa: E501
-    """add_coordinates
-
-    Adds the latest coordinate data to quick storage # noqa: E501
-
-    :param coordinates:
-    :type coordinates: list | bytes
-
-    :rtype: Added
-    """
-    if connexion.request.is_json:
-        coordinates = [Coordinate.from_dict(d) for d in connexion.request.get_json()]  # noqa: E501
-    return handle_add_coordinates(coordinates)
+# add
+#   if not authorization_check(connexion.request.headers): return UnauthorizedResponse("")
+def authorization_check(headers: Dict[str, str]):
+    headers.get('X-API-Key', 'definitely-unauthorised!')
 
 
-def retrive_instructions():  # noqa: E501
-    """retrive_instructions
+def handle_add_coordinates(coordinates: List[Coordinate]) -> Added:  # noqa: E501
+    print(coordinates)  # todo - add this to the db
+    return Added("done")
 
-    gets instructions for the Pi to execute # noqa: E501
 
-
-    :rtype: Instructions
-    """
-    return 'do some magic!'
+def handle_retrive_instructions() -> Instructions:  # noqa: E501
+    # todo - infer this from the database
+    i = Instructions("do-nothing")
+    return i

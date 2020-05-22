@@ -7,3 +7,4 @@ from swagger_server.models.added import Added
 from swagger_server.models.coordinate import Coordinate
 from swagger_server.models.error import Error
 from swagger_server.models.instructions import Instructions
+from swagger_server.models.unauthorized_response import UnauthorizedResponse

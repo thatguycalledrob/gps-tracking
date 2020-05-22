@@ -10,6 +10,8 @@ consumes:
 - "application/json"
 produces:
 - "application/json"
+security:
+- APIKeyHeader: []
 paths:
   /coordinates:
     post:
@@ -30,6 +32,8 @@ paths:
           description: "created"
           schema:
             $ref: "#/definitions/added"
+        "401":
+          $ref: "#/definitions/UnauthorizedResponse"
         default:
           description: "unexpected error"
           schema:
@@ -45,11 +49,18 @@ paths:
           description: "responded"
           schema:
             $ref: "#/definitions/instructions"
+        "401":
+          $ref: "#/definitions/UnauthorizedResponse"
         default:
           description: "unexpected error"
           schema:
             $ref: "#/definitions/Error"
       x-swagger-router-controller: "swagger_server.controllers.default_controller"
+securityDefinitions:
+  APIKeyHeader:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
 definitions:
   added:
     type: "object"
@@ -92,8 +103,16 @@ definitions:
         enum:
         - "restart"
         - "startVnc"
+        - "do-nothing"
     example:
       instruction: "restart"
+  UnauthorizedResponse:
+    type: "object"
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
   Error:
     type: "object"
     required:

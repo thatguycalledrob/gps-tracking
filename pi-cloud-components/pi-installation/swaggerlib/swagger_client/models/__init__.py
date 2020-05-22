@@ -1,7 +1,6 @@
 # coding: utf-8
 
 # flake8: noqa
-
 """
     Van Tracker Piside
 
@@ -15,14 +14,9 @@
 
 from __future__ import absolute_import
 
-# import apis into sdk package
-from swagger_client.api.default_api import DefaultApi
-
-# import ApiClient
-from swagger_client.api_client import ApiClient
-from swagger_client.configuration import Configuration
-# import models into sdk package
+# import models into model package
 from swagger_client.models.added import Added
 from swagger_client.models.coordinate import Coordinate
 from swagger_client.models.error import Error
 from swagger_client.models.instructions import Instructions
+from swagger_client.models.unauthorized_response import UnauthorizedResponse

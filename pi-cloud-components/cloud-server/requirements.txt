@@ -1,3 +1,10 @@
-connexion == 1.1.15
+# required for the python server - notice the slightly out of date versions!
 python_dateutil == 2.6.0
 setuptools >= 21.0.0
+Werkzeug==0.15.6
+Flask==1.1.1
+connexion==1.5.3
+
+# for the logger
+google-cloud-logging
+logging
