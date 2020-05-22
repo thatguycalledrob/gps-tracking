@@ -1,8 +1,9 @@
+import hashlib
 import json
 from os.path import dirname, join, abspath
 from typing import List, Dict, Tuple
 
-from swagger_client import UnauthorizedResponse
+from swagger_server.models import UnauthorizedResponse
 from swagger_server.models.added import Added  # noqa: E501
 from swagger_server.models.coordinate import Coordinate  # noqa: E501
 from swagger_server.models.instructions import Instructions  # noqa: E501
@@ -20,16 +21,20 @@ def authorization_check(headers: Dict[str, str]) -> bool:
             # doing the load manually.
             # May be due to windows file endings todo: check
             j = json.loads(f.read().strip())
-            secret = j.get('secret')
+
+            # we use a hash here, not that anyone will try hacking us,
+            # but you can exploit string comparison time to easily break
+            # plaintext comparison. A hash mitigates this issue
+            secret = hashlib.sha1(j.get('secret').strip().encode()).hexdigest()
         except Exception as e:
             slogger.warn(f"secret file read exception: {e}")
             # deny access by default.
             return False
 
     slogger.info("secret = ", secret)
-    slogger.info("header = ", h)
+    slogger.info("header = ", hashlib.sha1(h.strip().encode()).hexdigest())
 
-    return h.strip() == secret.strip()
+    return hashlib.sha1(h.strip().encode()).hexdigest() == secret.strip()
 
 
 def AuthError() -> Tuple[UnauthorizedResponse, int]:

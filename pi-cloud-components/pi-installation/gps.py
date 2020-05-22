@@ -56,7 +56,7 @@ def setup_client() -> DefaultApi:
     # configure API client.
     cl = Configuration()
     cl.host = url
-    cl.api_key = {'X-API-Key': 'secret'}
+    cl.api_key = {'X-API-Key': secret}
 
     return swagger_client.DefaultApi(
         swagger_client.ApiClient(cl)
@@ -69,6 +69,8 @@ if __name__ == '__main__':
     observation_interval = 10  # how often (in s) to take a reading
     report_interval = 60  # how often (in s) to make an API call
 
+    counter = 0
+
     api_client = setup_client()
 
     # Port specific to hardware configuration and pi variant.
@@ -76,7 +78,8 @@ if __name__ == '__main__':
     port = serial.Serial('/dev/serial0', baudrate=9600, timeout=0.5)
 
     while True:
-
+        counter += 1
+        print(f"running round: {counter}")
         try:
 
             # Initialise message body
@@ -104,12 +107,12 @@ if __name__ == '__main__':
                     # Use the API struct to define the Coordinates
                     msgBody.append(
                         Coordinate(
-                            time=datetime.datetime.utcnow().timestamp(),
-                            lat="{:.5f}".format(out[0]),
-                            long="{:.5f}".format(out[1]),
-                            alt="{:.1f}".format(out[2]),
-                            sats="{:.1f}".format(out[3]),
-                            order=c
+                            time=int(datetime.datetime.utcnow().timestamp()),
+                            lat=float("{:.5f}".format(out[0])),
+                            long=float("{:.5f}".format(out[1])),
+                            alt=float("{:.1f}".format(out[2])),
+                            sats=float("{:.1f}".format(out[3])),
+                            order=float(c)
                         )
                     )
 
