@@ -15,7 +15,7 @@ class Instructions(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, instruction: str=None):  # noqa: E501
+    def __init__(self, instruction: str = None):  # noqa: E501
         """Instructions - a model defined in Swagger
 
         :param instruction: The instruction of this Instructions.  # noqa: E501
@@ -64,7 +64,7 @@ class Instructions(Model):
         if instruction not in allowed_values:
             raise ValueError(
                 "Invalid value for `instruction` ({0}), must be one of {1}"
-                .format(instruction, allowed_values)
+                    .format(instruction, allowed_values)
             )
 
         self._instruction = instruction
