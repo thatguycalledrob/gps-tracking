@@ -1,0 +1,164 @@
+---
+swagger: "2.0"
+
+info:
+  version: "0.0.1"
+  title: "Van Tracker Piside"
+
+basePath: "/pi/v1"
+
+schemes:
+- "https"
+
+consumes:
+- "application/json"
+
+produces:
+- "application/json"
+
+
+securityDefinitions:
+   APIKeyHeader:
+     type: apiKey
+     in: header
+     name: X-API-Key
+
+# Global security (applies to all operations):
+security:
+  - APIKeyHeader: []
+
+
+# actual API path definitions
+paths:
+
+  /coordinates:
+
+    post:
+      description: "Adds the latest coordinate data to quick storage"
+      operationId: "add_coordinates"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "coordinates"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/coordinate"
+      responses:
+
+        "201":
+          description: "created"
+          schema:
+            $ref: "#/definitions/added"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+
+        "401":
+          description: "invalid authorization"
+          schema:
+            $ref: '#/definitions/UnauthorizedResponse'
+
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+
+
+  /instructions:
+
+    get:
+      description: "gets instructions for the Pi to execute"
+      operationId: "retrive_instructions"
+      parameters: []
+      responses:
+
+        "200":
+          description: "responded"
+          schema:
+            $ref: "#/definitions/instructions"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+
+        "401":
+          description: "invalid authorization"
+          schema:
+            $ref: '#/definitions/UnauthorizedResponse'
+
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+
+
+# definitions are reusable chunks.
+# If we add more api calls, we may want to use the "coordinate"
+# object again, so we can referance it via "#/definitions/coordinate"
+# additonally it makes the paths above easier to read.
+definitions:
+
+  added:
+    type: "object"
+    required:
+    - "status"
+    properties:
+      status:
+        type: "string"
+    example:
+      status: "status"
+
+  coordinate:
+    type: "object"
+    required:
+    - "alt"
+    - "lat"
+    - "long"
+    - "sats"
+    - "time"
+    properties:
+      time:
+        type: "integer"
+        format: "int64"
+      sats:
+        type: "number"
+      lat:
+        type: "number"
+      long:
+        type: "number"
+      alt:
+        type: "number"
+      order:
+        type: "number"
+
+  instructions:
+    type: "object"
+    required:
+    - "instruction"
+    properties:
+      instruction:
+        type: "string"
+        enum:
+        - "restart"
+        - "startVnc"
+        - "do-nothing"
+    example:
+      instruction: "restart"
+
+  UnauthorizedResponse:
+    type: "object"
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+
+  Error:
+    type: "object"
+    required:
+    - "code"
+    - "message"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"

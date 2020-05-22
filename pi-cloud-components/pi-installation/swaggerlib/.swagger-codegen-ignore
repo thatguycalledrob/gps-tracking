@@ -1,0 +1,14 @@
+# automated tests that are not currently used.
+# ignore these - we can write out own unit tests.
+tox.ini
+.travis.yml
+git_push.sh
+test-requirements.txt
+test/
+test
+
+# our "logic" folder  - here is where the API is served from!
+swagger_server/logic/
+
+# info that we have added to the readme.md
+README.md

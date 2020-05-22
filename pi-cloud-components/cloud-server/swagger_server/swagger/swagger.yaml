@@ -1,0 +1,130 @@
+---
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: "Van Tracker Piside"
+basePath: "/pi/v1"
+schemes:
+- "https"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+security:
+- APIKeyHeader: []
+paths:
+  /coordinates:
+    post:
+      description: "Adds the latest coordinate data to quick storage"
+      operationId: "add_coordinates"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "coordinates"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/coordinate"
+      responses:
+        "201":
+          description: "created"
+          schema:
+            $ref: "#/definitions/added"
+        "401":
+          description: "invalid authorization"
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /instructions:
+    get:
+      description: "gets instructions for the Pi to execute"
+      operationId: "retrive_instructions"
+      parameters: []
+      responses:
+        "200":
+          description: "responded"
+          schema:
+            $ref: "#/definitions/instructions"
+        "401":
+          description: "invalid authorization"
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+securityDefinitions:
+  APIKeyHeader:
+    type: "apiKey"
+    name: "X-API-Key"
+    in: "header"
+definitions:
+  added:
+    type: "object"
+    required:
+    - "status"
+    properties:
+      status:
+        type: "string"
+    example:
+      status: "status"
+  coordinate:
+    type: "object"
+    required:
+    - "alt"
+    - "lat"
+    - "long"
+    - "sats"
+    - "time"
+    properties:
+      time:
+        type: "integer"
+        format: "int64"
+      sats:
+        type: "number"
+      lat:
+        type: "number"
+      long:
+        type: "number"
+      alt:
+        type: "number"
+      order:
+        type: "number"
+  instructions:
+    type: "object"
+    required:
+    - "instruction"
+    properties:
+      instruction:
+        type: "string"
+        enum:
+        - "restart"
+        - "startVnc"
+        - "do-nothing"
+    example:
+      instruction: "restart"
+  UnauthorizedResponse:
+    type: "object"
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+  Error:
+    type: "object"
+    required:
+    - "code"
+    - "message"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
