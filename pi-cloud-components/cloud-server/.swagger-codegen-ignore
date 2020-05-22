@@ -15,3 +15,11 @@ README.md
 
 # contents of the requirements for the docker container
 requirements.txt
+
+# alpine image causes issues with some pip modules.
+# Slim-buster is 100% bigger at 52Mb, not 22Mb - but
+# lets not prematurely optimise image size here...
+Dockerfile
+
+# comment this line if you add new routes
+controllers/default_controller.py

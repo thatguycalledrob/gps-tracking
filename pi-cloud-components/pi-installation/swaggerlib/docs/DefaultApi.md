@@ -23,8 +23,14 @@ import swagger_client
 from swagger_client.rest import ApiException
 from pprint import pprint
 
+# Configure API key authorization: APIKeyHeader
+configuration = swagger_client.Configuration()
+configuration.api_key['X-API-Key'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# configuration.api_key_prefix['X-API-Key'] = 'Bearer'
+
 # create an instance of the API class
-api_instance = swagger_client.DefaultApi()
+api_instance = swagger_client.DefaultApi(swagger_client.ApiClient(configuration))
 coordinates = [swagger_client.Coordinate()] # list[Coordinate] | 
 
 try:
@@ -46,7 +52,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-No authorization required
+[APIKeyHeader](../README.md#APIKeyHeader)
 
 ### HTTP request headers
 
@@ -70,8 +76,14 @@ import swagger_client
 from swagger_client.rest import ApiException
 from pprint import pprint
 
+# Configure API key authorization: APIKeyHeader
+configuration = swagger_client.Configuration()
+configuration.api_key['X-API-Key'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# configuration.api_key_prefix['X-API-Key'] = 'Bearer'
+
 # create an instance of the API class
-api_instance = swagger_client.DefaultApi()
+api_instance = swagger_client.DefaultApi(swagger_client.ApiClient(configuration))
 
 try:
     api_response = api_instance.retrive_instructions()
@@ -89,7 +101,7 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-No authorization required
+[APIKeyHeader](../README.md#APIKeyHeader)
 
 ### HTTP request headers
 

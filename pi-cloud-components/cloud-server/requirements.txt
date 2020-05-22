@@ -7,4 +7,3 @@ connexion==1.5.3
 
 # for the logger
 google-cloud-logging
-logging

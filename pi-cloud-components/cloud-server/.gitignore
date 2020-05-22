@@ -62,3 +62,7 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+# secret files - do not commit!!
+secret.json
+key.json

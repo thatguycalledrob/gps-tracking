@@ -58,7 +58,9 @@ paths:
             $ref: "#/definitions/Error"
 
         "401":
-           $ref: '#/definitions/UnauthorizedResponse'
+          description: "invalid authorization"
+          schema:
+            $ref: '#/definitions/UnauthorizedResponse'
 
       x-swagger-router-controller: "swagger_server.controllers.default_controller"
 
@@ -81,7 +83,9 @@ paths:
             $ref: "#/definitions/Error"
 
         "401":
-           $ref: '#/definitions/UnauthorizedResponse'
+          description: "invalid authorization"
+          schema:
+            $ref: '#/definitions/UnauthorizedResponse'
 
       x-swagger-router-controller: "swagger_server.controllers.default_controller"
 

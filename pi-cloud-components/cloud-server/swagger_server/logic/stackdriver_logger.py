@@ -10,26 +10,27 @@ client = gcp_logger.Client()
 client.setup_logging(log_level=py_logger.DEBUG)
 _internal_logger = client.logger('incode-logger')
 
-class logger:
+
+class slogger:
     @staticmethod
     def debug(msg: Any, *args, **kwargs) -> None:
-        logger._print_formatted("DEBUG", msg, args, **kwargs)
+        slogger._print_formatted("DEBUG", msg, args, **kwargs)
 
     @staticmethod
     def info(msg: Any, *args, **kwargs) -> None:
-        logger._print_formatted("INFO", msg, args, **kwargs)
+        slogger._print_formatted("INFO", msg, args, **kwargs)
 
     @staticmethod
     def warn(msg: Any, *args, **kwargs) -> None:
-        logger._print_formatted("WARNING", msg, args, **kwargs)
+        slogger._print_formatted("WARNING", msg, args, **kwargs)
 
     @staticmethod
     def error(msg: Any, *args, **kwargs) -> None:
-        logger._print_formatted("ERROR", msg, args, **kwargs)
+        slogger._print_formatted("ERROR", msg, args, **kwargs)
 
     @staticmethod
     def crit(msg: Any, *args, **kwargs) -> None:
-        logger._print_formatted("CRITICAL", msg, args, **kwargs)
+        slogger._print_formatted("CRITICAL", msg, args, **kwargs)
 
     @staticmethod
     def _print_formatted(level: str, msg: Any, *args, **kwargs) -> None:
