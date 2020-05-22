@@ -1,21 +1,26 @@
-import json
-import serial
-import pynmea2
-import time
+from typing import List
+from os.path import dirname, join, abspath
+from swagger_client import Coordinate, DefaultApi
+from swagger_client.configuration import Configuration
+
 import datetime
-import requests
-import os
+import json
+import pynmea2
+import serial
+import swagger_client
+import sys
+import time
 
 
 def read_gps(line):
     # port read returns a byte array
     # any standard text decoding will work
     # more info: https://www.gpsinformation.org/dale/nmea.htm
-    l = line.decode('ascii')
-    if 'GGA' in l:
+    ln = line.decode('ascii')
+    if 'GGA' in ln:
         try:
 
-            gps = pynmea2.parse(l, check=False)
+            gps = pynmea2.parse(ln, check=False)
             calc = [
                 float(gps.latitude),
                 float(gps.longitude),
@@ -33,21 +38,50 @@ def read_gps(line):
     return None
 
 
+def setup_client() -> DefaultApi:
+
+    # read the secret.json file right off
+    with open(join(abspath(dirname(__file__)), 'secret.json'), mode='r', encoding='utf-8') as f:
+        try:
+            # json.load is getting weird errors with this file!
+            # doing the load manually.
+            j = json.loads(f.read().strip())
+            secret: str = j.get('secret')
+            url: str = j.get('url')
+        except Exception as e:
+            print(f"secret file read exception: {e}", file=sys.stderr)
+            print("warning: missing or invalid secret.json file!", file=sys.stderr)
+            exit(1)
+
+    # configure API client.
+    cl = Configuration()
+    cl.host = url
+    cl.api_key = {'X-API-Key': 'secret'}
+
+    return swagger_client.DefaultApi(
+        swagger_client.ApiClient(cl)
+    )
+
+
 if __name__ == '__main__':
-    port_read_rate = 0.01                           # how often to read from the serial port
-    observation_interval = 10                       # how often (in s) to take a reading
-    report_interval = 60                            # how often (in s) to make an API call
-    url = os.environ.get("GPS_URL", "")             # get the cloud environment URL
-    secret = os.environ.get("cloud_secret", "")     # password to connect to the backend
-    auth_headers = {"Authorization": secret}        # headers construct
+    # reporting
+    port_read_rate = 0.01  # how often to read from the serial port
+    observation_interval = 10  # how often (in s) to take a reading
+    report_interval = 60  # how often (in s) to make an API call
+
+    api_client = setup_client()
 
     # Port specific to hardware configuration and pi variant.
     # baudrate chosen from gps chip manual.
     port = serial.Serial('/dev/serial0', baudrate=9600, timeout=0.5)
 
     while True:
+
         try:
-            msgBody = []
+
+            # Initialise message body
+            msgBody: List[Coordinate] = []
+
             for c in range(int(report_interval / observation_interval)):
 
                 observations = []
@@ -66,27 +100,30 @@ if __name__ == '__main__':
 
                 if observations:
                     out = [float(sum(o)) / len(o) for o in zip(*observations)]
-                    msgBody.append({
-                        "i": c,
-                        "utc": datetime.datetime.utcnow().timestamp(),
-                        "obs": {
-                            "lat": "{:.5f}".format(out[0]),
-                            "long": "{:.5f}".format(out[1]),
-                            "alt": "{:.1f}".format(out[2]),
-                            "sats": "{:.1f}".format(out[3]),
-                        }
-                    })
 
-                # reset the stream between observations
+                    # Use the API struct to define the Coordinates
+                    msgBody.append(
+                        Coordinate(
+                            time=datetime.datetime.utcnow().timestamp(),
+                            lat="{:.5f}".format(out[0]),
+                            long="{:.5f}".format(out[1]),
+                            alt="{:.1f}".format(out[2]),
+                            sats="{:.1f}".format(out[3]),
+                            order=c
+                        )
+                    )
+
+                # reset the IO stream between observations
+                # this reduces frequency of locks and drops
                 port.close()
                 time.sleep(5)
                 port.open()
 
-            r = requests.post(url + "/position", json={"data": msgBody}, headers=auth_headers)
-            r.close()
+            api_client.add_coordinates(msgBody)
 
         except Exception as e:
 
+            # ah... the issue with wrapping everything in a try catch!
             if e == KeyboardInterrupt:
                 exit(0)
 

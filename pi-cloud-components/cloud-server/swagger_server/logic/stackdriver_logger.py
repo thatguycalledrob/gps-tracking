@@ -1,14 +1,7 @@
 """ Provides better logging """
 import json
+import sys
 from typing import Any, Dict, Optional, List
-from google.cloud import logging as gcp_logger  # pip installed via "google-cloud-logging"
-import logging as py_logger
-
-# Instantiates a gcp logging client client, with a debug log level
-# this posts logs to the gcp stackdriver logs.
-client = gcp_logger.Client()
-client.setup_logging(log_level=py_logger.DEBUG)
-_internal_logger = client.logger('incode-logger')
 
 
 class slogger:
@@ -54,5 +47,7 @@ class slogger:
         # Nasty, but required to deal with things like datetime.datetime objects
         logs: Dict[str, str] = json.loads(json.dumps(json_print, default=str))
 
-        # This prints to stdout - read by stackdriver
-        _internal_logger.log_struct(logs)
+        # This dumps the logs to stdout. From there stackdriver picks these up and
+        # puts them into the gcp logging viewer.
+        print(json.dumps(logs))
+        sys.stdout.flush()

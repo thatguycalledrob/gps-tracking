@@ -9,3 +9,7 @@
 .project
 .settings/
 .vscode/
+
+# secret files
+**/secret.json
+**/key.json

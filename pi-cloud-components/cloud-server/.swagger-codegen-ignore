@@ -10,7 +10,7 @@ swagger_server/test
 # our "logic" folder  - here is where the API is served from!
 swagger_server/logic/
 
-# info that we have added to the readme.md
+# info that we have added to the readme.md!
 README.md
 
 # contents of the requirements for the docker container
@@ -21,5 +21,10 @@ requirements.txt
 # lets not prematurely optimise image size here...
 Dockerfile
 
+# gitignore stops the leak of secrets - don't allow
+# swagger the ability to revert it!
+.gitignore
+
 # comment this line if you add new routes
-controllers/default_controller.py
+swagger_server/controllers/default_controller.py
+

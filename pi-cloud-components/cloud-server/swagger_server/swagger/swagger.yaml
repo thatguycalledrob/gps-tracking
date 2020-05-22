@@ -33,7 +33,9 @@ paths:
           schema:
             $ref: "#/definitions/added"
         "401":
-          $ref: "#/definitions/UnauthorizedResponse"
+          description: "invalid authorization"
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
         default:
           description: "unexpected error"
           schema:
@@ -50,7 +52,9 @@ paths:
           schema:
             $ref: "#/definitions/instructions"
         "401":
-          $ref: "#/definitions/UnauthorizedResponse"
+          description: "invalid authorization"
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
         default:
           description: "unexpected error"
           schema:

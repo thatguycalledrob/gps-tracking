@@ -13,7 +13,13 @@ Python 3.5.2+
 The following files in this directory:
 ```
 1.   key.json     ->      this is your GCP project service account key
+
 2.   secret.json  ->      this is a "password" - nothing fancy just classic private-private key
+                          the file format is as follows:
+
+                          {
+                            "secret": "my-secret-here"
+                          }
 ```
 
 ## Usage
@@ -34,12 +40,6 @@ Your Swagger definition lives here:
 
 ```
 http://localhost:8080/pi/v1/swagger.json
-```
-
-To launch the integration tests, use tox:
-```
-sudo pip install tox
-tox
 ```
 
 ## Running with Docker
