@@ -3,6 +3,7 @@ import json
 from os.path import dirname, join, abspath
 from typing import List, Dict, Tuple
 
+from swagger_server.logic.firestore import add_coordinate, add_coordinates
 from swagger_server.models import UnauthorizedResponse
 from swagger_server.models.added import Added  # noqa: E501
 from swagger_server.models.coordinate import Coordinate  # noqa: E501
@@ -30,10 +31,6 @@ def authorization_check(headers: Dict[str, str]) -> bool:
             slogger.warn(f"secret file read exception: {e}")
             # deny access by default.
             return False
-
-    slogger.info("secret = ", secret)
-    slogger.info("header = ", hashlib.sha1(h.strip().encode()).hexdigest())
-
     return hashlib.sha1(h.strip().encode()).hexdigest() == secret.strip()
 
 
@@ -42,7 +39,7 @@ def AuthError() -> Tuple[UnauthorizedResponse, int]:
 
 
 def handle_add_coordinates(coordinates: List[Coordinate]) -> Tuple[Added, int]:  # noqa: E501
-    print(coordinates)  # todo - add this to the db
+    add_coordinates(coordinates)
     return Added("done"), 201
 
 
