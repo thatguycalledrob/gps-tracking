@@ -16,6 +16,7 @@ import time
 logger = multiprocessing.log_to_stderr()
 logger.setLevel(logging.DEBUG)
 
+
 class StopWatch:
     def __init__(self):
         self._start_time = time.time()
@@ -76,7 +77,6 @@ def main() -> None:
     # reporting
     PORT_READ_RATE = 0.01  # how often to read from the serial port
     OBSERVATION_INTERVAL = 10  # how often (in s) to take a reading
-    REPORT_INTERVAL = 60  # how often (in s) to make an API call
 
     s2 = StopWatch()
     logger.debug("beginning client setup")
@@ -92,49 +92,41 @@ def main() -> None:
         msgBody: List[Coordinate] = []
 
         logger.debug(f"beginning observation interval {s2.get_elapsed_time()}s.")
-        for c in range(int(REPORT_INTERVAL / OBSERVATION_INTERVAL)):
 
-            observations = []
-            for _ in range(int(OBSERVATION_INTERVAL * PORT_READ_RATE ** -1)):
-                time.sleep(PORT_READ_RATE)
-                try:
-                    if port.inWaiting():
-                        x = read_gps(port.readline())
-                        if x is not None:
-                            observations.append(x)
-                except Exception:
-                    # on IO failure, close and port with wait
-                    port.close()
-                    time.sleep(1)
-                    port.open()
+        observations = []
+        for _ in range(int(OBSERVATION_INTERVAL * PORT_READ_RATE ** -1)):
+            time.sleep(PORT_READ_RATE)
+            try:
+                if port.inWaiting():
+                    x = read_gps(port.readline())
+                    if x is not None:
+                        observations.append(x)
+            except Exception:
+                # on IO failure, close and port with wait
+                port.close()
+                time.sleep(1)
+                port.open()
 
-            if observations:
-                out = [float(sum(o)) / len(o) for o in zip(*observations)]
+        if observations:
+            out = [float(sum(o)) / len(o) for o in zip(*observations)]
 
-                # Use the API struct to define the Coordinates
-                msgBody.append(
-                    Coordinate(
-                        time=int(datetime.datetime.utcnow().timestamp()),
-                        lat=float("{:.5f}".format(out[0])),
-                        long=float("{:.5f}".format(out[1])),
-                        alt=float("{:.1f}".format(out[2])),
-                        sats=float("{:.1f}".format(out[3])),
-                        order=float(c)
-                    )
+            # Use the API struct to define the Coordinates
+            msgBody.append(
+                Coordinate(
+                    time=int(datetime.datetime.utcnow().timestamp()),
+                    lat=float("{:.5f}".format(out[0])),
+                    long=float("{:.5f}".format(out[1])),
+                    alt=float("{:.1f}".format(out[2])),
+                    sats=float("{:.1f}".format(out[3])),
+                    order=0
                 )
+            )
 
-                logger.debug(f"At time: {s2.get_elapsed_time()}s, "
-                      f"num observations: {len(msgBody)}")
+            logger.debug(f"Observation complete in {s2.get_elapsed_time()}s. Sending data via HTTP")
 
-            # reset the IO stream between observations
-            # this reduces frequency of locks and drops
-            port.close()
-            time.sleep(5)
-            port.open()
+            api_client.add_coordinates(msgBody)
 
-        logger.debug(f"Observations complete in {s2.get_elapsed_time()}s. Sending data via HTTP")
-        api_client.add_coordinates(msgBody)
-        logger.debug(f"Sending complete in {s2.get_elapsed_time()}s.")
+            logger.debug(f"Sending complete in {s2.get_elapsed_time()}s.")
 
     except Exception as e:
 
@@ -150,7 +142,7 @@ def main() -> None:
 if __name__ == '__main__':
     # 1 min 30s timeout
     # This main thread will be spawned on a cron schedule of 2 minuites
-    # it will read data for approx 60s, and then transit via a HTTP API.
+    # it will read data for approx 45s, and then transit via a HTTP API.
     # This leaves 30s for spinup and shutdown, plus 30s between the cron
     # taks for the py interpreter to clean itself up.
     TIMEOUT = 90
