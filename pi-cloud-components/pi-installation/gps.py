@@ -10,8 +10,11 @@ import pynmea2
 import multiprocessing
 import serial
 import sys
+import logging
 import time
 
+logger = multiprocessing.log_to_stderr()
+logger.setLevel(logging.DEBUG)
 
 class StopWatch:
     def __init__(self):
@@ -57,8 +60,8 @@ def setup_client() -> DefaultApi:
             secret: str = j.get('secret')
             url: str = j.get('url')
         except Exception as e:
-            print(f"secret file read exception: {e}", file=sys.stderr)
-            print("warning: missing or invalid secret.json file!", file=sys.stderr)
+            logger.error(f"secret file read exception: {e}", file=sys.stderr)
+            logger.error("warning: missing or invalid secret.json file!", file=sys.stderr)
             exit(1)
 
     # configure API client.
@@ -75,7 +78,10 @@ def main() -> None:
     OBSERVATION_INTERVAL = 10  # how often (in s) to take a reading
     REPORT_INTERVAL = 60  # how often (in s) to make an API call
 
+    s2 = StopWatch()
+    logger.debug("beginning client setup")
     api_client = setup_client()
+    logger.debug(f"Client setup complete in {s2.get_elapsed_time()}s.")
 
     # Port specific to hardware configuration and pi variant.
     # baudrate chosen from gps chip manual.
@@ -85,6 +91,7 @@ def main() -> None:
         # Initialise message body
         msgBody: List[Coordinate] = []
 
+        logger.debug(f"beginning observation interval {s2.get_elapsed_time()}s.")
         for c in range(int(REPORT_INTERVAL / OBSERVATION_INTERVAL)):
 
             observations = []
@@ -116,13 +123,18 @@ def main() -> None:
                     )
                 )
 
+                logger.debug(f"At time: {s2.get_elapsed_time()}s, "
+                      f"num observations: {len(msgBody)}")
+
             # reset the IO stream between observations
             # this reduces frequency of locks and drops
             port.close()
             time.sleep(5)
             port.open()
 
+        logger.debug(f"Observations complete in {s2.get_elapsed_time()}s. Sending data via HTTP")
         api_client.add_coordinates(msgBody)
+        logger.debug(f"Sending complete in {s2.get_elapsed_time()}s.")
 
     except Exception as e:
 
@@ -131,7 +143,7 @@ def main() -> None:
             sys.exit(0)
 
         # we can probably log this somewhere if we have issues
-        print("Critical runtime error!", json.dumps(e, default=str))
+        logger.error("Critical runtime error!", json.dumps(e, default=str))
         pass
 
 
@@ -142,9 +154,8 @@ if __name__ == '__main__':
     # This leaves 30s for spinup and shutdown, plus 30s between the cron
     # taks for the py interpreter to clean itself up.
     TIMEOUT = 90
-    print(f"Starting up with a timeout of {TIMEOUT}")
+    logger.debug(f"Starting up with a timeout of {TIMEOUT}")
     s = StopWatch()
-
 
     p = multiprocessing.Process(target=main, name="read")
     p.start()
@@ -158,5 +169,5 @@ if __name__ == '__main__':
         except Exception:
             pass
 
-    print(f"Execution complete in {s.get_elapsed_time()}s. Exiting with success.")
+    logger.debug(f"Execution complete in {s.get_elapsed_time()}s. Exiting with success.")
     sys.exit(0)
