@@ -13,6 +13,14 @@ import sys
 import time
 
 
+class StopWatch:
+    def __init__(self):
+        self._start_time = time.time()
+
+    def get_elapsed_time(self):
+        return time.time() - self._start_time
+
+
 def read_gps(line):
     # port read returns a byte array
     # any standard text decoding will work
@@ -134,6 +142,9 @@ if __name__ == '__main__':
     # This leaves 30s for spinup and shutdown, plus 30s between the cron
     # taks for the py interpreter to clean itself up.
     TIMEOUT = 90
+    print(f"Starting up with a timeout of {TIMEOUT}")
+    s = StopWatch()
+
 
     p = multiprocessing.Process(target=main, name="read")
     p.start()
@@ -147,4 +158,5 @@ if __name__ == '__main__':
         except Exception:
             pass
 
+    print(f"Execution complete in {s.get_elapsed_time()}s. Exiting with success.")
     sys.exit(0)

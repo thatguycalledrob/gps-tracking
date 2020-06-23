@@ -47,3 +47,5 @@ Below is a one liner to add the cron job to
 ```shell script
 crontab -l > file; echo "*/2 * * * * /usr/bin/python3 /home/pi/Desktop/gps-tracking/pi-cloud-components/pi-installation/gps.py > /home/pi/Desktop/gps_app.log 2>&1" >> file; crontab file; rm file;
 ```
+
+Note, if you do not have a crontab, you may need to create one via: ```crontab -e```
