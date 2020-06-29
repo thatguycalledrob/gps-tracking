@@ -28,3 +28,8 @@ Dockerfile
 # comment this line if you add new routes
 swagger_server/controllers/default_controller.py
 
+# do not overwrite the main, vital config is done here
+swagger_server/__main__.py
+
+# custom logging config
+swagger_server/logic/log_configurator.py

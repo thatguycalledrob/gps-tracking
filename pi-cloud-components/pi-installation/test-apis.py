@@ -28,7 +28,7 @@ if __name__ == '__main__':
     # configure API client.
     c = Configuration()
     c.host = url
-    c.api_key = {'X-API-Key': 'secret'}
+    c.api_key = {'X-API-Key': secret}
     api_instance = swagger_client.DefaultApi(
         swagger_client.ApiClient(c)
     )

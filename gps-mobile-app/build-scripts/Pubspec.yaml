@@ -1,0 +1,4 @@
+name: dart_testing_script
+dependencies:
+    widget:
+      path: ../mobile-app/gps-dart-jaguar-client

@@ -20,7 +20,7 @@ import (
 	//
 	//    sw "github.com/myname/myrepo/go"
 	//
-	sw "./go"
+	sw "github.com/thatguycalledrob/gps-tracking/gps-mobile-app/cloud-app-server/go"
 )
 
 func main() {

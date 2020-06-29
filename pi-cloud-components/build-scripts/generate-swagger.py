@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
     # create the python flask server stub from the swagger
     run_wrapper(client, 'swaggerapi/swagger-codegen-cli',
-                ['generate', '-i', '/data/pi-cloud-swagger.yaml', '-l', 'python-flask', '-o', '/data/cloud-server'],
+                ['generate', '-i', '/data/pi-cloud-swagger.yaml', '-l', 'python-flask', '-o', '/data/process-gps-points'],
                 mounts=[build_directory], remove=True,
                 detach=False, stdout=True, stderr=True)
 
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     time.sleep(2)
 
     # write our handlers somewhere that they won't get overwritten!
-    # con_dir = path.abspath(path.join('..', 'cloud-server', 'swagger_server', 'controllers'))
+    # con_dir = path.abspath(path.join('..', 'process-gps-points', 'swagger_server', 'controllers'))
     # controllers = [f for f in os.listdir(con_dir) if (path.isfile(path.join(con_dir, f)) and not '__' in f)]
     # for c in controllers:
     #     with(open(path.join(con_dir, c), 'w')) as file:
