@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/firestore"
+	"google.golang.org/api/iterator"
 	"google.golang.org/genproto/googleapis/type/latlng"
 
 	"github.com/tidwall/geojson"
@@ -126,10 +127,42 @@ func writeNewRecord(c []*pointWithTime, client *firestore.Client, ctx context.Co
 	log.Printf("New record written")
 }
 
+func deleteCollection(ctx context.Context, client *firestore.Client,
+	ref *firestore.CollectionRef, batchSize int) error {
+	for {
+		iter := ref.Limit(batchSize).Documents(ctx)
+		numDeleted := 0
+		batch := client.Batch()
+		for {
+			doc, err := iter.Next()
+			if err == iterator.Done {
+				break
+			}
+			if err != nil {
+				return err
+			}
+
+			batch.Delete(doc.Ref)
+			numDeleted++
+		}
+		if numDeleted == 0 {
+			return nil
+		}
+		_, err := batch.Commit(ctx)
+		if err != nil {
+			return err
+		}
+	}
+}
+
 func removeOutdatedCoords(client *firestore.Client, ctx context.Context) {
 	log.Println("Removing outdated coordindates records in Firestore")
-	coords := client.Collection("coordinates").Documents(ctx)
-	coords.r
+	coords := client.Collection("coordinates")
+	err := deleteCollection(ctx, client, coords, 100)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return
 }
 
 func ProcessCoords(w http.ResponseWriter, r *http.Request, client *firestore.Client, ctx context.Context) {
