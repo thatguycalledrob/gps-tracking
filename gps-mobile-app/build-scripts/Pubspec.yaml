@@ -1,4 +1,10 @@
 name: dart_testing_script
 dependencies:
-    widget:
-      path: ../mobile-app/gps-dart-jaguar-client
+#  swagger:
+#    git:
+#      url: git://github.com/thatguycalledrob/gps-tracking.git
+#      path: gps-mobile-app/dart-client
+  swagger:
+    path: C:/van_tracking_project/gps-tracking/gps-mobile-app/dart-client
+environment:
+  sdk: ">=2.0.0-dev.68.0 <3.0.0"

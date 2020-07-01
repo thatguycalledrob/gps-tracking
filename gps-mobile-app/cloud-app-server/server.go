@@ -13,18 +13,16 @@ import (
 	"log"
 	"net/http"
 
-	// WARNING!
-	// Change this to a fully-qualified import path
-	// once you place this file into your project.
-	// For example,
-	//
-	//    sw "github.com/myname/myrepo/go"
-	//
 	sw "github.com/thatguycalledrob/gps-tracking/gps-mobile-app/cloud-app-server/go"
 )
 
+var client *firestore.Client
+
 func main() {
 	log.Printf("Server started")
+
+	client = sw.setupFirestore()
+	defer client.Close()
 
 	router := sw.NewRouter()
 

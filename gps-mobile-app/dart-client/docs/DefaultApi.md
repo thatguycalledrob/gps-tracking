@@ -9,9 +9,9 @@ All URIs are relative to *https://localhost/app/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**currentLocation**](DefaultApi.md#currentLocation) | **Get** /current-location | 
-[**queryHistory**](DefaultApi.md#queryHistory) | **Post** /history-query | 
-[**retriveParkingSpots**](DefaultApi.md#retriveParkingSpots) | **Get** /parking-spots | 
+[**currentLocation**](DefaultApi.md#currentLocation) | **GET** /current-location | 
+[**queryHistory**](DefaultApi.md#queryHistory) | **POST** /history-query | 
+[**retriveParkingSpots**](DefaultApi.md#retriveParkingSpots) | **GET** /parking-spots | 
 
 
 # **currentLocation**
