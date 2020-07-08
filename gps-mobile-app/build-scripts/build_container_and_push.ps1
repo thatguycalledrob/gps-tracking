@@ -26,7 +26,7 @@ cd ..
 cd cloud-app-server
 # This builds the app into a tagged docker container.
 # The tag is important, it specifics which google project contaienr storage to push to.
-docker build -f Dockerfile -t gcr.io/${project}/app-server:${version} .
+docker build --no-cache -f Dockerfile -t gcr.io/${project}/app-server:${version} . 
 
 # The container is now pushed to the cloud container repository
 docker push gcr.io/${project}/app-server:${version}

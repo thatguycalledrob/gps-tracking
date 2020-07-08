@@ -10,11 +10,23 @@
 package swagger
 
 import (
+	jsoniter "github.com/json-iterator/go"
+	"log"
 	"net/http"
 )
 
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
 func CurrentLocation(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	vals := GetLatestCoord()
+	j, err := json.Marshal(&vals)
+	if err != nil {
+		log.Fatalf("Error marshelling %+v", vals)
+	}
+	w.Write(j)
+
 	w.WriteHeader(http.StatusOK)
 }
 

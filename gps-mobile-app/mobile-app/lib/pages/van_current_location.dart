@@ -4,7 +4,7 @@ import 'package:latlong/latlong.dart';
 
 import '../widgets/drawer.dart';
 
-class VanCurrentLocation extends StatefulWidget {
+class flutter runVanCurrentLocation extends StatefulWidget {
   static const String route = 'map_controller_animated';
 
   @override

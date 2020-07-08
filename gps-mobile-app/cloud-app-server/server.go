@@ -10,21 +10,30 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	sw "github.com/thatguycalledrob/gps-tracking/gps-mobile-app/cloud-app-server/go"
 )
 
-var client *firestore.Client
+func getPort() string {
+	p := os.Getenv("PORT")
+	if p == "" {
+		p = "8080"
+	}
+	return p
+}
 
 func main() {
 	log.Printf("Server started")
 
-	client = sw.setupFirestore()
+	client := sw.SetupFirestore()
 	defer client.Close()
 
 	router := sw.NewRouter()
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	port := getPort()
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), router))
 }

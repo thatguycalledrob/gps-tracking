@@ -18,10 +18,8 @@ import (
 var ctx context.Context
 var client *firestore.Client
 
-
 func handleProcessCoords(w http.ResponseWriter, r *http.Request) {
 	logic.ProcessCoords(w, r, client, ctx)
-	
 }
 
 func getPort() string {
@@ -38,11 +36,13 @@ func setupFirestore() *firestore.Client {
 	ctx = context.Background()
 	sa := option.WithCredentialsFile("/key.json")
 
-	app, err := firebase.NewApp(ctx, nil, sa); if err != nil {
+	app, err := firebase.NewApp(ctx, nil, sa)
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	c, err := app.Firestore(ctx); if err != nil {
+	c, err := app.Firestore(ctx)
+	if err != nil {
 		log.Fatal(err)
 	}
 
@@ -53,7 +53,7 @@ func setupServer() {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", handleProcessCoords).Methods("POST")
 
-	port := getPort()	
+	port := getPort()
 	log.Printf("Server listening on port %s", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), r))
 }
