@@ -42,8 +42,8 @@ func SetupFirestore() *firestore.Client {
 	return Client
 }
 
-func toCoordinateResponse(c *coordinateValue) *Coordinate {
-	var converted *Coordinate
+func toCoordinateResponse(c coordinateValue) Coordinate {
+	var converted Coordinate
 	converted.Alt = float32(c.Altitude)
 	converted.Time = c.Timestamp.Unix()
 	converted.Lat = float32(c.Geostamp.Latitude)
@@ -53,7 +53,7 @@ func toCoordinateResponse(c *coordinateValue) *Coordinate {
 	return converted
 }
 
-func GetLatestCoord() *Coordinate {
+func GetLatestCoord() Coordinate {
 	// get the coords time ordered. newest first
 	log.Println("Accessing coordindates records in Firestore")
 	orderedCoords := Client.Collection("coordinates").OrderBy("timestamp", firestore.Desc).Documents(ctx)
@@ -65,6 +65,6 @@ func GetLatestCoord() *Coordinate {
 
 	var cval *coordinateValue
 	coordsRef.DataTo(&cval)
-	return toCoordinateResponse(cval)
+	return toCoordinateResponse(*cval)
 
 }
