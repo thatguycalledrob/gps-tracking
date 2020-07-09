@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vantracker/pages/key_current_info.dart';
 
 import '../pages/van_current_location.dart';
 import '../pages/esri.dart';
@@ -28,6 +29,14 @@ Drawer buildDrawer(BuildContext context, String currentRoute) {
           onTap: () {
             Navigator.pushReplacementNamed(
                 context, VanCurrentLocation.route);
+          },
+        ),
+        ListTile(
+          title: const Text('Van Info Page'),
+          selected: currentRoute == VanInfoPage.route,
+          onTap: () {
+            Navigator.pushReplacementNamed(
+                context, VanInfoPage.route);
           },
         ),
       ],
